@@ -79,6 +79,10 @@
             if isDarwin then
               {
                 cargoExtraArgs = "-p kanaemi-macos -p kanaemi-settings";
+                # Builds llama.cpp, which the neural converter runs on.
+                nativeBuildInputs = [ pkgs.cmake ];
+                # cmake is for that build alone, not for configuring this one.
+                dontUseCmakeConfigure = true;
                 buildInputs = [ pkgs.libiconv ];
               }
             else
@@ -102,7 +106,7 @@
             if isDarwin then
               {
                 # What apps/macos/bundle.sh runs.
-                nativeBuildInputs = [
+                nativeBuildInputs = build.nativeBuildInputs ++ [
                   pkgs.librsvg
                   pkgs.perl
                 ];
@@ -193,6 +197,8 @@
               pkgs.libiconv
               # Renders the input source icon from the logo SVG (apps/macos/install.sh).
               pkgs.librsvg
+              # Builds llama.cpp, which the neural converter runs on.
+              pkgs.cmake
             ]
             # What the Dioxus desktop renderer (wry) links against on Linux.
             ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [
