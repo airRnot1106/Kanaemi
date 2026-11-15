@@ -7,6 +7,7 @@ mod common;
 mod completion;
 mod conversion;
 mod explain;
+mod fallback;
 mod numeric;
 mod placeholder;
 mod ranking;

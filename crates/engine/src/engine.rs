@@ -5,6 +5,10 @@ use std::sync::Arc;
 
 use kanaemi_core::{Candidate, Converter, Effect};
 
+mod fallback;
+
+pub use fallback::Fallback;
+
 use crate::dictionary::okuri_lookup_by_head;
 use crate::explain::Trace;
 use crate::numeric::{Numbers, takes_kana};
@@ -129,6 +133,9 @@ pub struct Engine {
     /// Set while a key is only tried, so the user's functions, which may
     /// count their calls, run once for each key.
     without_functions: Cell<bool>,
+    fallback: Option<Rc<dyn Fallback>>,
+    /// Set while a reading to complete with is converted to show beside it.
+    without_fallback: Cell<bool>,
     /// The last conversion without okurigana, so a candidate is recorded by
     /// the item it was filled from even when its function gives another
     /// text each time.
@@ -193,6 +200,8 @@ impl Engine {
             selections_changed: false,
             functions: None,
             without_functions: Cell::new(false),
+            fallback: None,
+            without_fallback: Cell::new(false),
             last: RefCell::new(None),
             committed: None,
         }
@@ -824,6 +833,9 @@ impl Converter for Engine {
             let facts = found.iter().map(|f| f.facts.clone()).collect();
             self.last.replace(Some((reading.clone(), facts)));
         }
+        if found.is_empty() {
+            return self.fall_back(reading, okurigana.as_deref());
+        }
         self.order(reading, found, None)
             .into_iter()
             .map(|f| Candidate {
@@ -841,7 +853,7 @@ impl Converter for Engine {
         // Shown as converting would give them, functions and all, while the
         // conversion a commit is recorded by stays the one converted last.
         let last = self.last.take();
-        let candidates = self.convert(reading, None);
+        let candidates = self.without_fallback(|| self.convert(reading, None));
         self.last.replace(last);
         candidates
             .into_iter()
