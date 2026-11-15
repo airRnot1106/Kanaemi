@@ -309,6 +309,7 @@ fn a_file_with_typed_words_cannot_be_put_where_the_settings_folder_keeps_somethi
         ("custom", "sub/../dictionaries/custom.tsv"),
         ("selections", "romaji/picks.tsv"),
         ("selections", "functions/picks.tsv"),
+        ("custom", "neural/model.gguf"),
         ("selections", "custom.tsv.lock"),
         ("custom", "sync/words.lock"),
     ] {

@@ -9,12 +9,13 @@ use std::rc::Rc;
 
 use kanaemi_config::{DictionarySource, Files};
 use kanaemi_core::{Candidate, Config, Converter, Effect, Event, Mode};
-use kanaemi_engine::{Engine, Functions, LineSink, Selections};
+use kanaemi_engine::{Engine, Fallback, Functions, LineSink, Selections};
 use kanaemi_functions::LuauFunctions;
 
 use crate::control::{ControlPort, ControlRequest};
 use crate::dictionaries::{self, FileStamp, Stamp};
 use crate::functions;
+use crate::neural;
 use crate::settings;
 
 /// What this process may do with the settings folder.
@@ -54,6 +55,8 @@ pub struct Profile {
     functions_stamp: functions::Stamp,
     /// As the settings name them.
     disabled_functions: Vec<String>,
+    /// The neural converter, opened once: every engine opened asks the same.
+    fallback: Option<Rc<dyn Fallback>>,
     /// Whether the settings say to rank with the model. The engine follows
     /// only when it changes, so a toggle outlives other settings read again.
     ranking_model: bool,
@@ -106,6 +109,8 @@ impl Profile {
             access,
         );
         engine.set_functions(Some(functions.clone() as Rc<dyn Functions>));
+        let fallback = neural::open(&dir);
+        engine.set_fallback(fallback.clone());
         engine.set_model_enabled(settings.ranking_model);
         let mut profile = Self {
             access,
@@ -117,6 +122,7 @@ impl Profile {
             functions,
             functions_stamp,
             disabled_functions: settings.disabled_functions,
+            fallback,
             ranking_model: settings.ranking_model,
             settings_stamp,
             dictionary_stamp,
@@ -204,6 +210,7 @@ impl Profile {
                 self.access,
             );
             engine.set_functions(Some(self.functions.clone() as Rc<dyn Functions>));
+            engine.set_fallback(self.fallback.clone());
             let mut shared = self.engine.0.borrow_mut();
             let previous = std::mem::replace(&mut *shared, engine);
             // A sandbox cannot read the user custom dictionary back, so the

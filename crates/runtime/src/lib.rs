@@ -14,6 +14,7 @@ mod functions;
 mod hint;
 mod logging;
 mod masked;
+mod neural;
 mod profile;
 mod settings;
 mod shared;

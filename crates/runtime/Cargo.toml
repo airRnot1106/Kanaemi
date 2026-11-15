@@ -16,6 +16,9 @@ tracing = { version = "0.1", features = ["release_max_level_info"] }
 tracing-subscriber = { version = "0.3", features = ["fmt"] }
 unicode-segmentation = "1"
 
+[target.'cfg(target_os = "macos")'.dependencies]
+kanaemi-neural.workspace = true
+
 [dev-dependencies]
 criterion.workspace = true
 kanaemi-bench-support.workspace = true

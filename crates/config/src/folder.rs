@@ -22,6 +22,10 @@ pub const DICTIONARY_DIR: &str = "dictionaries";
 pub const ROMAJI_DIR: &str = "romaji";
 /// The folder of the functions a user writes, in the settings folder.
 pub const FUNCTIONS_DIR: &str = "functions";
+/// The folder of the neural model, in the settings folder.
+pub const NEURAL_DIR: &str = "neural";
+/// The neural model's file, in its folder, with its `tokenizer.json` beside it.
+pub const NEURAL_MODEL_FILE: &str = "model.gguf";
 /// The extension of text dictionaries and romaji tables.
 pub const TEXT_EXTENSION: &str = "tsv";
 /// The extension of binary dictionaries.
@@ -62,7 +66,7 @@ pub(crate) fn kept_for_else(path: &Path, dir: &Path, own: &Path) -> bool {
         return true;
     }
     let files = [FILE_NAME, MODEL_FILE, USER_CUSTOM_FILE, SELECTIONS_FILE];
-    let folders = [DICTIONARY_DIR, ROMAJI_DIR, FUNCTIONS_DIR];
+    let folders = [DICTIONARY_DIR, ROMAJI_DIR, FUNCTIONS_DIR, NEURAL_DIR];
     files
         .iter()
         .map(|file| place(&dir.join(file)))
