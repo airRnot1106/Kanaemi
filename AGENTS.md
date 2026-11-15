@@ -35,7 +35,7 @@ Run `just ci` before reporting a change as done. CI runs the same recipe.
 | Path | What lives there |
 | --- | --- |
 | `apps/` | the input method for each OS (`macos`, `windows`, `ibus`, `fcitx5`) and the settings app (`settings`) |
-| `crates/` | libraries: `core`, `engine`, `config`, `runtime`, `functions`, `linux`, `bench-support` |
+| `crates/` | libraries: `core`, `engine`, `config`, `runtime`, `functions`, `neural`, `linux`, `bench-support` |
 | `docs/` | concept, ADRs, specs, references |
 | `.github/` | CI, packaging and release workflows, and the scripts they run |
 | `.cargo/` | Cargo configuration for the build |
@@ -71,6 +71,7 @@ Scoped Commits, from now on; earlier history stays as it is:
 | `config` | `crates/config/` |
 | `runtime` | `crates/runtime/` |
 | `functions` | `crates/functions/` |
+| `neural` | `crates/neural/` |
 | `linux` | `crates/linux/` |
 | `bench` | `crates/bench-support/` and the benchmarks |
 | `macos` | `apps/macos/` |
