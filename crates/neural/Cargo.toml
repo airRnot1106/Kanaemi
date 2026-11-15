@@ -1,0 +1,12 @@
+[package]
+name = "kanaemi-neural"
+description = "Kana-kanji conversion by a neural model, for readings no dictionary has"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[target.'cfg(target_os = "macos")'.dependencies]
+kanaemi-engine.workspace = true
+karukan-engine = { git = "https://github.com/togatoga/karukan", rev = "4ed2450a4389c01cb8c929fabde419236eb11d53" }
+tracing = { version = "0.1", features = ["release_max_level_info"] }
